@@ -19,4 +19,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('Admin/login',[adminlogincontroller::class,'index'])->name('admin.login');
+
+Route::group(['prefix' => 'admin'],function (){
+
+    Route::group(['middleware' => 'admin.guest'],function (){
+
+        Route::get('/login',[adminlogincontroller::class,'index'])->name('admin.login');
+        Route::post('/authenticate',[adminlogincontroller::class,'authenticate'])->name('admin.authenticate');
+
+    });
+
+    Route::group(['middleware' => 'admin.auth'],function (){
+        Route::get('/login',[\App\Http\Controllers\admin\HomeController::class,'index'])->name('admin.dashboard');
+
+    });
+});
